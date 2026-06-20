@@ -1,83 +1,129 @@
 import Button from "../../../components/atoms/Button";
 
 const MahasiswaTable = ({
-  data = [],
+  data,
   onEdit,
   onDelete,
   onDetail,
-  canUpdate = false,
-  canDelete = false,
+  canUpdate,
+  canDelete,
 }) => {
   return (
-    <table className="w-full text-sm text-gray-700 border-collapse">
-      <thead className="bg-blue-600 text-white">
-        <tr>
-          <th className="py-3 px-4 text-left">NIM</th>
-          <th className="py-3 px-4 text-left">Nama</th>
-          <th className="py-3 px-4 text-left">Program Studi</th>
-          <th className="py-3 px-4 text-left">Status</th>
-          <th className="py-3 px-4 text-center">Aksi</th>
-        </tr>
-      </thead>
+    <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
+      <table className="w-full text-sm text-gray-700">
+        <thead className="bg-blue-600 text-white">
+          <tr>
+            <th className="px-5 py-4 text-left font-bold">NIM</th>
+            <th className="px-5 py-4 text-left font-bold">Nama</th>
+            <th className="px-5 py-4 text-left font-bold">Email</th>
+            <th className="px-5 py-4 text-left font-bold">Program Studi</th>
+            <th className="px-5 py-4 text-center font-bold">Semester</th>
+            <th className="px-5 py-4 text-center font-bold">Status</th>
+            <th className="px-5 py-4 text-center font-bold">Aksi</th>
+          </tr>
+        </thead>
 
-      <tbody>
-        {data.length > 0 ? (
-          data.map((mhs, index) => (
-            <tr
-              key={mhs.id}
-              className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
-            >
-              <td className="py-3 px-4">{mhs.nim}</td>
-              <td className="py-3 px-4 font-medium">{mhs.nama}</td>
-              <td className="py-3 px-4">{mhs.programStudi}</td>
-              <td className="py-3 px-4">
-                <span
-                  className={`inline-block px-2 py-0.5 rounded-full text-xs font-semibold ${
-                    mhs.status
-                      ? "bg-green-100 text-green-700"
-                      : "bg-red-100 text-red-600"
-                  }`}
-                >
-                  {mhs.status ? "Aktif" : "Tidak Aktif"}
-                </span>
-              </td>
+        <tbody className="divide-y divide-gray-100">
+          {data.length > 0 ? (
+            data.map((item) => (
+              <tr
+                key={item.id}
+                className="bg-white transition hover:bg-blue-50/60"
+              >
+                <td className="px-5 py-4 font-semibold text-gray-700">
+                  {item.nim}
+                </td>
 
-              <td className="py-3 px-4 text-center space-x-2">
-                <Button size="sm" onClick={() => onDetail(mhs.id)}>
-                  Detail
-                </Button>
+                <td className="px-5 py-4">
+                  <div>
+                    <p className="font-bold text-gray-800">
+                      {item.nama}
+                    </p>
+                    <p className="text-xs text-gray-400">
+                      Mahasiswa
+                    </p>
+                  </div>
+                </td>
 
-                {canUpdate && (
-                  <Button
-                    size="sm"
-                    variant="warning"
-                    onClick={() => onEdit(mhs)}
+                <td className="px-5 py-4 text-gray-600">
+                  {item.email || "-"}
+                </td>
+
+                <td className="px-5 py-4 text-gray-600">
+                  {item.programStudi}
+                </td>
+
+                <td className="px-5 py-4 text-center">
+                  <span className="inline-flex min-w-10 items-center justify-center rounded-full bg-gray-100 px-3 py-1 text-xs font-bold text-gray-700">
+                    {item.semester}
+                  </span>
+                </td>
+
+                <td className="px-5 py-4 text-center">
+                  <span
+                    className={`inline-flex items-center justify-center rounded-full px-4 py-1 text-xs font-bold ${
+                      item.status
+                        ? "bg-green-100 text-green-700"
+                        : "bg-red-100 text-red-700"
+                    }`}
                   >
-                    Edit
-                  </Button>
-                )}
+                    {item.status ? "Aktif" : "Tidak Aktif"}
+                  </span>
+                </td>
 
-                {canDelete && (
-                  <Button
-                    size="sm"
-                    variant="danger"
-                    onClick={() => onDelete(mhs.id)}
-                  >
-                    Hapus
-                  </Button>
-                )}
+                <td className="px-5 py-4">
+                  <div className="flex justify-center gap-2">
+                    <button
+                      onClick={() => onDetail(item.id)}
+                      className="rounded-lg bg-blue-100 px-3 py-1.5 text-xs font-bold text-blue-700 transition hover:bg-blue-200"
+                    >
+                      Detail
+                    </button>
+
+                    {canUpdate && (
+                      <button
+                        onClick={() => onEdit(item)}
+                        className="rounded-lg bg-yellow-100 px-3 py-1.5 text-xs font-bold text-yellow-700 transition hover:bg-yellow-200"
+                      >
+                        Edit
+                      </button>
+                    )}
+
+                    {canDelete && (
+                      <button
+                        onClick={() => onDelete(item.id)}
+                        className="rounded-lg bg-red-100 px-3 py-1.5 text-xs font-bold text-red-700 transition hover:bg-red-200"
+                      >
+                        Hapus
+                      </button>
+                    )}
+                  </div>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td
+                colSpan="7"
+                className="px-5 py-12 text-center"
+              >
+                <div className="flex flex-col items-center justify-center">
+                  <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-gray-100">
+                    <span className="text-2xl text-gray-400">!</span>
+                  </div>
+                  <p className="font-semibold text-gray-500">
+                    Belum ada data mahasiswa.
+                  </p>
+                  <p className="mt-1 text-xs text-gray-400">
+                    Tambahkan data mahasiswa atau ubah kata kunci pencarian.
+                  </p>
+                </div>
               </td>
             </tr>
-          ))
-        ) : (
-          <tr>
-            <td colSpan="5" className="py-6 text-center text-gray-400 italic">
-              Belum ada data mahasiswa.
-            </td>
-          </tr>
-        )}
-      </tbody>
-    </table>
+          )}
+        </tbody>
+      </table>
+    </div>
   );
 };
 

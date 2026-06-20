@@ -1,25 +1,17 @@
 {
   "dosen": [
     {
-      "id": "1",
+      "id": 1,
       "nidn": "0612345678",
       "nama": "Dr. Randy Savero",
       "email": "randy@gmail.com",
       "programStudi": "Teknik Informatika",
       "status": true
-    },
-    {
-      "nidn": "0611111111",
-      "nama": "TEDDY",
-      "email": "teddy@gmail.com",
-      "programStudi": "ILMU KOMUNIKASI",
-      "status": false,
-      "id": "gcwcxwNo97c"
     }
   ],
   "kelas": [
     {
-      "id": "1",
+      "id": 1,
       "nama": "IF-01",
       "programStudi": "Teknik Informatika",
       "semester": 6,
@@ -27,25 +19,17 @@
       "status": true
     },
     {
-      "id": "2",
+      "id": 2,
       "nama": "SI-02",
       "programStudi": "Sistem Informasi",
       "semester": 4,
       "waliKelas": "Dr. Budi Santoso",
       "status": true
-    },
-    {
-      "nama": "IK-01",
-      "programStudi": "ILMU KOMUNIKASI",
-      "semester": 2,
-      "waliKelas": "TEDDY",
-      "status": false,
-      "id": "E72kqc-liQ8"
     }
   ],
   "mahasiswa": [
     {
-      "id": "1",
+      "id": 1,
       "nim": "A11.2023.15267",
       "nama": "Susi Susanti",
       "programStudi": "Teknik Informatika",
@@ -55,7 +39,7 @@
       "status": true
     },
     {
-      "id": "2",
+      "id": 2,
       "nim": "A11.2023.15268",
       "nama": "Budi Santoso",
       "programStudi": "Sistem Informasi",
@@ -63,21 +47,11 @@
       "email": "budi@mail.com",
       "alamat": "Kendal",
       "status": true
-    },
-    {
-      "nim": "A11.2023.15263",
-      "nama": "AURELIA DWI WIJAYANTI",
-      "programStudi": "TEKNIK INFORMATIKA",
-      "semester": 6,
-      "email": "aurelia@gmail.com",
-      "alamat": "Semarang",
-      "status": true,
-      "id": "JTMOs74p16w"
     }
   ],
   "mataKuliah": [
     {
-      "id": "1",
+      "id": 1,
       "kode": "IF001",
       "nama": "Pemrograman Web",
       "sks": 3,
@@ -89,7 +63,7 @@
   ],
   "user": [
     {
-      "id": "1",
+      "id": 1,
       "name": "Administrator",
       "email": "admin@gmail.com",
       "password": "admin",
@@ -124,7 +98,7 @@
       ]
     },
     {
-      "id": "2",
+      "id": 2,
       "name": "Mahasiswa",
       "email": "mahasiswa@gmail.com",
       "password": "password",
@@ -138,7 +112,7 @@
       ]
     },
     {
-      "id": "3",
+      "id": 3,
       "name": "Dr. Randy Savero",
       "email": "randy@gmail.com",
       "password": "password",
@@ -157,6 +131,5 @@
         "kelas.read"
       ]
     }
-  ],
-  "$schema": "./node_modules/json-server/schema.json"
+  ]
 }

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import MahasiswaModal from "./MahasiswaModal";
 import MahasiswaTable from "./MahasiswaTable";
+import TablePagination from "../Components/TablePagination";
 import {
   confirmDelete,
   confirmDialog,
@@ -45,11 +46,34 @@ const Mahasiswa = () => {
   const [mahasiswa, setMahasiswa] = useState([]);
   */
 
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(5);
+  const [search, setSearch] = useState("");
+  const [sortBy, setSortBy] = useState("nama");
+  const [sortOrder, setSortOrder] = useState("asc");
+
+  const queryParams = {
+    q: search,
+    _page: page,
+    _limit: limit,
+    _sort: sortBy,
+    _order: sortOrder,
+  };
+
   const {
-    data: mahasiswa = [],
+    data: result = { data: [], total: 0 },
     isLoading,
     isError,
+  } = useMahasiswa(queryParams);
+
+  const {
+    data: allResult = { data: [], total: 0 },
   } = useMahasiswa();
+
+  const mahasiswa = result.data;
+  const allMahasiswa = allResult.data;
+  const totalCount = result.total;
+  const totalPages = Math.ceil(totalCount / limit) || 1;
 
   const { mutate: store } = useStoreMahasiswa();
   const { mutate: update } = useUpdateMahasiswa();
@@ -137,7 +161,7 @@ const Mahasiswa = () => {
         return;
       }
 
-      const nimExists = mahasiswa.some(
+      const nimExists = allMahasiswa.some(
         (item) => item.nim === formData.nim && item.id !== form.id
       );
 
@@ -146,13 +170,13 @@ const Mahasiswa = () => {
         return;
       }
 
-      const result = await confirmDialog({
+      const resultConfirm = await confirmDialog({
         title: "Konfirmasi Update",
         text: `Yakin ingin menyimpan perubahan data "${formData.nama}"?`,
         confirmText: "Ya, Update",
       });
 
-      if (!result.isConfirmed) return;
+      if (!resultConfirm.isConfirmed) return;
 
       /*
       try {
@@ -186,7 +210,7 @@ const Mahasiswa = () => {
       return;
     }
 
-    const nimExists = mahasiswa.some(
+    const nimExists = allMahasiswa.some(
       (item) => item.nim === formData.nim
     );
 
@@ -194,6 +218,14 @@ const Mahasiswa = () => {
       toastError("NIM sudah terdaftar.");
       return;
     }
+
+    const resultConfirm = await confirmDialog({
+      title: "Konfirmasi Tambah",
+      text: `Yakin ingin menambahkan data "${formData.nama}"?`,
+      confirmText: "Ya, Simpan",
+    });
+
+    if (!resultConfirm.isConfirmed) return;
 
     /*
     try {
@@ -220,15 +252,15 @@ const Mahasiswa = () => {
       return;
     }
 
-    const target = mahasiswa.find((item) => item.id === id);
+    const target = allMahasiswa.find((item) => item.id === id);
     if (!target) return;
 
-    const result = await confirmDelete({
+    const resultConfirm = await confirmDelete({
       title: "Hapus Mahasiswa?",
       text: `Data "${target.nama}" (${target.nim}) akan dihapus permanen.`,
     });
 
-    if (!result.isConfirmed) {
+    if (!resultConfirm.isConfirmed) {
       toastError("Penghapusan dibatalkan.");
       return;
     }
@@ -264,9 +296,9 @@ const Mahasiswa = () => {
     );
   }
 
-  if (isLoading) {
+  if (isLoading && mahasiswa.length === 0) {
     return (
-      <div className="bg-white shadow rounded-lg p-6">
+      <div className="rounded-3xl border border-gray-200 bg-white p-7 shadow-sm">
         <p className="text-gray-500">
           Memuat data mahasiswa...
         </p>
@@ -294,12 +326,35 @@ const Mahasiswa = () => {
         {canCreate && (
           <button
             onClick={openAddModal}
-            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
+            className="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-blue-700 hover:shadow-md"
           >
             + Tambah Mahasiswa
           </button>
         )}
       </div>
+
+      <TablePagination
+        search={search}
+        setSearch={setSearch}
+        sortBy={sortBy}
+        setSortBy={setSortBy}
+        sortOrder={sortOrder}
+        setSortOrder={setSortOrder}
+        limit={limit}
+        setLimit={setLimit}
+        page={page}
+        setPage={setPage}
+        totalPages={totalPages}
+        totalCount={totalCount}
+        placeholder="Cari nama, NIM, email, atau program studi..."
+        sortOptions={[
+          { value: "nama", label: "Sort by Nama" },
+          { value: "nim", label: "Sort by NIM" },
+          { value: "email", label: "Sort by Email" },
+          { value: "programStudi", label: "Sort by Program Studi" },
+          { value: "semester", label: "Sort by Semester" },
+        ]}
+      />
 
       <div className="overflow-x-auto">
         <MahasiswaTable
@@ -316,7 +371,7 @@ const Mahasiswa = () => {
         isOpen={isModalOpen}
         isEdit={isEdit}
         form={form}
-        mahasiswa={mahasiswa}
+        mahasiswa={allMahasiswa}
         selectedMahasiswa={selectedMahasiswa}
         onChange={handleChange}
         onClose={closeModal}

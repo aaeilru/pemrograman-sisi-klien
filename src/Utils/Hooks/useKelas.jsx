@@ -14,11 +14,17 @@ import {
   toastError,
 } from "../Helpers/ToastHelpers";
 
-export const useKelas = () => {
+export const useKelas = (params = {}) => {
   return useQuery({
-    queryKey: ["kelas"],
-    queryFn: getAllKelas,
-    select: (res) => res?.data ?? [],
+    queryKey: ["kelas", params],
+    queryFn: () => getAllKelas(params),
+    select: (res) => ({
+      data: res?.data ?? [],
+      total: Number(res?.headers?.["x-total-count"] ?? 0),
+    }),
+    placeholderData: (previousData) => previousData,
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
   });
 };
 
@@ -28,14 +34,10 @@ export const useStoreKelas = () => {
   return useMutation({
     mutationFn: storeKelas,
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["kelas"],
-      });
+      queryClient.invalidateQueries({ queryKey: ["kelas"] });
       toastSuccess("Data kelas berhasil ditambahkan.");
     },
-    onError: () => {
-      toastError("Gagal menambahkan data kelas.");
-    },
+    onError: () => toastError("Gagal menambahkan data kelas."),
   });
 };
 
@@ -45,14 +47,10 @@ export const useUpdateKelas = () => {
   return useMutation({
     mutationFn: ({ id, data }) => updateKelas(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["kelas"],
-      });
+      queryClient.invalidateQueries({ queryKey: ["kelas"] });
       toastSuccess("Data kelas berhasil diupdate.");
     },
-    onError: () => {
-      toastError("Gagal mengupdate data kelas.");
-    },
+    onError: () => toastError("Gagal mengupdate data kelas."),
   });
 };
 
@@ -62,13 +60,9 @@ export const useDeleteKelas = () => {
   return useMutation({
     mutationFn: deleteKelas,
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["kelas"],
-      });
+      queryClient.invalidateQueries({ queryKey: ["kelas"] });
       toastSuccess("Data kelas berhasil dihapus.");
     },
-    onError: () => {
-      toastError("Gagal menghapus data kelas.");
-    },
+    onError: () => toastError("Gagal menghapus data kelas."),
   });
 };

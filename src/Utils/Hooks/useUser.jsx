@@ -14,11 +14,17 @@ import {
   toastError,
 } from "../Helpers/ToastHelpers";
 
-export const useUser = () => {
+export const useUser = (params = {}) => {
   return useQuery({
-    queryKey: ["user"],
-    queryFn: getAllUser,
-    select: (res) => res?.data ?? [],
+    queryKey: ["user", params],
+    queryFn: () => getAllUser(params),
+    select: (res) => ({
+      data: res?.data ?? [],
+      total: Number(res?.headers?.["x-total-count"] ?? 0),
+    }),
+    keepPreviousData: true,
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
   });
 };
 
@@ -28,14 +34,10 @@ export const useStoreUser = () => {
   return useMutation({
     mutationFn: storeUser,
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["user"],
-      });
+      queryClient.invalidateQueries({ queryKey: ["user"] });
       toastSuccess("User berhasil ditambahkan.");
     },
-    onError: () => {
-      toastError("Gagal menambahkan user.");
-    },
+    onError: () => toastError("Gagal menambahkan user."),
   });
 };
 
@@ -45,14 +47,10 @@ export const useUpdateUser = () => {
   return useMutation({
     mutationFn: ({ id, data }) => updateUser(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["user"],
-      });
+      queryClient.invalidateQueries({ queryKey: ["user"] });
       toastSuccess("User berhasil diupdate.");
     },
-    onError: () => {
-      toastError("Gagal mengupdate user.");
-    },
+    onError: () => toastError("Gagal mengupdate user."),
   });
 };
 
@@ -62,13 +60,9 @@ export const useDeleteUser = () => {
   return useMutation({
     mutationFn: deleteUser,
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["user"],
-      });
+      queryClient.invalidateQueries({ queryKey: ["user"] });
       toastSuccess("User berhasil dihapus.");
     },
-    onError: () => {
-      toastError("Gagal menghapus user.");
-    },
+    onError: () => toastError("Gagal menghapus user."),
   });
 };

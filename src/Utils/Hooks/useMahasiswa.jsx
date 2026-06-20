@@ -14,11 +14,22 @@ import {
   toastError,
 } from "../Helpers/ToastHelpers";
 
-export const useMahasiswa = () => {
+export const useMahasiswa = (params = {}) => {
   return useQuery({
-    queryKey: ["mahasiswa"],
-    queryFn: getAllMahasiswa,
-    select: (res) => res?.data ?? [],
+    queryKey: ["mahasiswa", params],
+    queryFn: () => getAllMahasiswa(params),
+    select: (res) => ({
+      data: res?.data ?? [],
+      total: Number(
+        res?.headers?.["x-total-count"] ??
+          res?.headers?.["X-Total-Count"] ??
+          res?.data?.length ??
+          0
+      ),
+    }),
+    placeholderData: (previousData) => previousData,
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
   });
 };
 
@@ -28,14 +39,10 @@ export const useStoreMahasiswa = () => {
   return useMutation({
     mutationFn: storeMahasiswa,
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["mahasiswa"],
-      });
+      queryClient.invalidateQueries({ queryKey: ["mahasiswa"] });
       toastSuccess("Data mahasiswa berhasil ditambahkan.");
     },
-    onError: () => {
-      toastError("Gagal menambahkan data mahasiswa.");
-    },
+    onError: () => toastError("Gagal menambahkan data mahasiswa."),
   });
 };
 
@@ -45,14 +52,10 @@ export const useUpdateMahasiswa = () => {
   return useMutation({
     mutationFn: ({ id, data }) => updateMahasiswa(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["mahasiswa"],
-      });
+      queryClient.invalidateQueries({ queryKey: ["mahasiswa"] });
       toastSuccess("Data mahasiswa berhasil diupdate.");
     },
-    onError: () => {
-      toastError("Gagal mengupdate data mahasiswa.");
-    },
+    onError: () => toastError("Gagal mengupdate data mahasiswa."),
   });
 };
 
@@ -62,13 +65,9 @@ export const useDeleteMahasiswa = () => {
   return useMutation({
     mutationFn: deleteMahasiswa,
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["mahasiswa"],
-      });
+      queryClient.invalidateQueries({ queryKey: ["mahasiswa"] });
       toastSuccess("Data mahasiswa berhasil dihapus.");
     },
-    onError: () => {
-      toastError("Gagal menghapus data mahasiswa.");
-    },
+    onError: () => toastError("Gagal menghapus data mahasiswa."),
   });
 };

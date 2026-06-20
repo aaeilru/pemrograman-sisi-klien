@@ -5,6 +5,7 @@ import {
   confirmDelete,
   confirmDialog,
 } from "../../../Utils/Helpers/SwalHelpers";
+import TablePagination from "../Components/TablePagination";
 import {
   useUser,
   useStoreUser,
@@ -159,11 +160,34 @@ const User = () => {
   }, [canRead]);
   */
 
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(5);
+  const [search, setSearch] = useState("");
+  const [sortBy, setSortBy] = useState("name");
+  const [sortOrder, setSortOrder] = useState("asc");
+
+  const queryParams = {
+    q: search,
+    _page: page,
+    _limit: limit,
+    _sort: sortBy,
+    _order: sortOrder,
+  };
+
   const {
-    data: users = [],
+    data: result = { data: [], total: 0 },
     isLoading,
     isError,
+  } = useUser(queryParams);
+
+  const {
+    data: allResult = { data: [], total: 0 },
   } = useUser();
+
+  const users = result.data;
+  const allUsers = allResult.data;
+  const totalCount = result.total;
+  const totalPages = Math.ceil(totalCount / limit) || 1;
 
   const { mutate: storeUserMutation } = useStoreUser();
   const { mutate: updateUserMutation } = useUpdateUser();
@@ -278,7 +302,7 @@ const User = () => {
         return;
       }
 
-      const emailExists = users.some(
+      const emailExists = allUsers.some(
         (item) =>
           item.email === payload.email &&
           item.id !== form.id
@@ -289,13 +313,13 @@ const User = () => {
         return;
       }
 
-      const result = await confirmDialog({
+      const resultConfirm = await confirmDialog({
         title: "Konfirmasi Update",
         text: `Yakin ingin menyimpan perubahan user "${payload.name}"?`,
         confirmText: "Ya, Update",
       });
 
-      if (!result.isConfirmed) return;
+      if (!resultConfirm.isConfirmed) return;
 
       /*
       await updateUser(form.id, payload);
@@ -325,7 +349,7 @@ const User = () => {
       return;
     }
 
-    const emailExists = users.some(
+    const emailExists = allUsers.some(
       (item) => item.email === payload.email
     );
 
@@ -334,13 +358,13 @@ const User = () => {
       return;
     }
 
-    const result = await confirmDialog({
+    const resultConfirm = await confirmDialog({
       title: "Konfirmasi Tambah",
       text: `Yakin ingin menambahkan user "${payload.name}"?`,
       confirmText: "Ya, Simpan",
     });
 
-    if (!result.isConfirmed) return;
+    if (!resultConfirm.isConfirmed) return;
 
     /*
     await storeUser(payload);
@@ -365,15 +389,15 @@ const User = () => {
       return;
     }
 
-    const target = users.find((item) => item.id === id);
+    const target = allUsers.find((item) => item.id === id);
     if (!target) return;
 
-    const result = await confirmDelete({
+    const resultConfirm = await confirmDelete({
       title: "Hapus User?",
       text: `User "${target.name}" akan dihapus permanen.`,
     });
 
-    if (!result.isConfirmed) {
+    if (!resultConfirm.isConfirmed) {
       toastError("Penghapusan dibatalkan.");
       return;
     }
@@ -388,11 +412,11 @@ const User = () => {
 
   if (!canRead) {
     return (
-      <div className="bg-white shadow rounded-lg p-6">
-        <h2 className="text-xl font-bold text-gray-800">
+      <div className="rounded-3xl border border-gray-200 bg-white p-7 shadow-sm">
+        <h2 className="text-xl font-bold text-gray-900">
           Akses Ditolak
         </h2>
-        <p className="text-gray-500 mt-2">
+        <p className="mt-2 text-sm text-gray-500">
           Anda tidak memiliki izin untuk melihat data user.
         </p>
       </div>
@@ -401,8 +425,8 @@ const User = () => {
 
   if (isLoading && users.length === 0) {
     return (
-      <div className="bg-white shadow rounded-lg p-6">
-        <p className="text-gray-500">
+      <div className="rounded-3xl border border-gray-200 bg-white p-7 shadow-sm">
+        <p className="text-sm font-medium text-gray-500">
           Memuat data user...
         </p>
       </div>
@@ -411,8 +435,8 @@ const User = () => {
 
   if (isError) {
     return (
-      <div className="bg-white shadow rounded-lg p-6">
-        <p className="text-red-500">
+      <div className="rounded-3xl border border-gray-200 bg-white p-7 shadow-sm">
+        <p className="text-sm font-medium text-red-500">
           Gagal memuat data user.
         </p>
       </div>
@@ -420,54 +444,84 @@ const User = () => {
   }
 
   return (
-    <div className="bg-white shadow rounded-lg p-6">
-      <div className="flex justify-between items-center mb-5">
-        <h2 className="text-2xl font-bold text-gray-800">
-          Manajemen User
-        </h2>
+    <div className="rounded-3xl border border-gray-200 bg-white p-7 shadow-sm">
+      <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900">
+            Manajemen User
+          </h2>
+        </div>
 
         {canCreate && (
           <button
             onClick={openAddModal}
-            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
+            className="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-blue-700 hover:shadow-md"
           >
             + Tambah User
           </button>
         )}
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm text-gray-700 border-collapse">
+      <TablePagination
+        search={search}
+        setSearch={setSearch}
+        sortBy={sortBy}
+        setSortBy={setSortBy}
+        sortOrder={sortOrder}
+        setSortOrder={setSortOrder}
+        limit={limit}
+        setLimit={setLimit}
+        page={page}
+        setPage={setPage}
+        totalPages={totalPages}
+        totalCount={totalCount}
+        placeholder="Cari nama, email, atau role..."
+        sortOptions={[
+          { value: "name", label: "Sort by Nama" },
+          { value: "email", label: "Sort by Email" },
+          { value: "role", label: "Sort by Role" },
+        ]}
+      />
+
+      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
+        <table className="w-full text-sm text-gray-700">
           <thead className="bg-blue-600 text-white">
             <tr>
-              <th className="py-3 px-4 text-left">Nama</th>
-              <th className="py-3 px-4 text-left">Email</th>
-              <th className="py-3 px-4 text-center">Role</th>
-              <th className="py-3 px-4 text-center">
-                Jumlah Permission
+              <th className="px-5 py-4 text-left font-bold">Nama</th>
+              <th className="px-5 py-4 text-left font-bold">Email</th>
+              <th className="px-5 py-4 text-center font-bold">Role</th>
+              <th className="px-5 py-4 text-center font-bold">
+                Permission
               </th>
-              <th className="py-3 px-4 text-center">Aksi</th>
+              <th className="px-5 py-4 text-center font-bold">Aksi</th>
             </tr>
           </thead>
 
-          <tbody>
+          <tbody className="divide-y divide-gray-100">
             {users.length > 0 ? (
-              users.map((item, index) => (
+              users.map((item) => (
                 <tr
                   key={item.id}
-                  className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
+                  className="bg-white transition hover:bg-blue-50/60"
                 >
-                  <td className="py-3 px-4 font-medium">
-                    {item.name}
+                  <td className="px-5 py-4">
+                    <div>
+                      <p className="font-bold text-gray-800">
+                        {item.name}
+                      </p>
+                      <p className="text-xs text-gray-400">
+                        User Sistem
+                      </p>
+                    </div>
                   </td>
 
-                  <td className="py-3 px-4">
+                  <td className="px-5 py-4 text-gray-600">
                     {item.email}
                   </td>
 
-                  <td className="py-3 px-4 text-center">
+                  <td className="px-5 py-4 text-center">
                     <span
-                      className={`inline-flex items-center justify-center px-4 py-1 rounded-full text-sm font-bold ${
+                      className={`inline-flex items-center justify-center rounded-full px-4 py-1 text-xs font-bold ${
                         item.role === "admin"
                           ? "bg-blue-100 text-blue-700"
                           : item.role === "dosen"
@@ -479,38 +533,49 @@ const User = () => {
                     </span>
                   </td>
 
-                  <td className="py-3 px-4 text-center">
-                    {item.permission?.length || 0}
+                  <td className="px-5 py-4 text-center">
+                    <span className="inline-flex min-w-10 items-center justify-center rounded-full bg-gray-100 px-3 py-1 text-xs font-bold text-gray-700">
+                      {item.permission?.length || 0}
+                    </span>
                   </td>
 
-                  <td className="py-3 px-4 text-center space-x-2">
-                    {canUpdate && (
-                      <button
-                        onClick={() => openEditModal(item)}
-                        className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
-                      >
-                        Edit
-                      </button>
-                    )}
+                  <td className="px-5 py-4">
+                    <div className="flex justify-center gap-2">
+                      {canUpdate && (
+                        <button
+                          onClick={() => openEditModal(item)}
+                          className="rounded-lg bg-yellow-100 px-3 py-1.5 text-xs font-bold text-yellow-700 transition hover:bg-yellow-200"
+                        >
+                          Edit
+                        </button>
+                      )}
 
-                    {canDelete && item.id !== authUser.id && (
-                      <button
-                        onClick={() => handleDelete(item.id)}
-                        className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
-                      >
-                        Hapus
-                      </button>
-                    )}
+                      {canDelete && item.id !== authUser.id && (
+                        <button
+                          onClick={() => handleDelete(item.id)}
+                          className="rounded-lg bg-red-100 px-3 py-1.5 text-xs font-bold text-red-700 transition hover:bg-red-200"
+                        >
+                          Hapus
+                        </button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td
-                  colSpan="5"
-                  className="py-6 text-center text-gray-400 italic"
-                >
-                  Belum ada data user.
+                <td colSpan="5" className="px-5 py-12 text-center">
+                  <div className="flex flex-col items-center justify-center">
+                    <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-gray-100">
+                      <span className="text-2xl text-gray-400">!</span>
+                    </div>
+                    <p className="font-semibold text-gray-500">
+                      Belum ada data user.
+                    </p>
+                    <p className="mt-1 text-xs text-gray-400">
+                      Tambahkan user atau ubah kata kunci pencarian.
+                    </p>
+                  </div>
                 </td>
               </tr>
             )}
@@ -519,16 +584,16 @@ const User = () => {
       </div>
 
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-lg w-full max-w-3xl max-h-[90vh] overflow-y-auto p-6">
-            <h3 className="text-xl font-bold text-gray-800 mb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+          <div className="max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-3xl bg-white p-7 shadow-xl">
+            <h3 className="mb-5 text-xl font-bold text-gray-900">
               {isEdit ? "Edit User" : "Tambah User"}
             </h3>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="mb-1 block text-sm font-semibold text-gray-700">
                     Nama
                   </label>
                   <input
@@ -539,13 +604,13 @@ const User = () => {
                         name: e.target.value,
                       }))
                     }
-                    className="w-full border px-3 py-2 rounded"
+                    className="w-full rounded-xl border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="mb-1 block text-sm font-semibold text-gray-700">
                     Email
                   </label>
                   <input
@@ -557,13 +622,13 @@ const User = () => {
                         email: e.target.value,
                       }))
                     }
-                    className="w-full border px-3 py-2 rounded"
+                    className="w-full rounded-xl border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="mb-1 block text-sm font-semibold text-gray-700">
                     Password
                   </label>
                   <input
@@ -575,19 +640,19 @@ const User = () => {
                         password: e.target.value,
                       }))
                     }
-                    className="w-full border px-3 py-2 rounded"
+                    className="w-full rounded-xl border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="mb-1 block text-sm font-semibold text-gray-700">
                     Role
                   </label>
                   <select
                     value={form.role}
                     onChange={handleRoleChange}
-                    className="w-full border px-3 py-2 rounded"
+                    className="w-full rounded-xl border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
                   >
                     <option value="admin">Admin</option>
                     <option value="dosen">Dosen</option>
@@ -598,7 +663,7 @@ const User = () => {
 
               {form.role === "dosen" && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="mb-1 block text-sm font-semibold text-gray-700">
                     Dosen ID
                   </label>
                   <input
@@ -611,24 +676,29 @@ const User = () => {
                       }))
                     }
                     placeholder="Isi jika user ini terhubung ke data dosen"
-                    className="w-full border px-3 py-2 rounded"
+                    className="w-full rounded-xl border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
                   />
                 </div>
               )}
 
-              <div className="border rounded-lg p-4">
-                <h4 className="text-lg font-bold text-gray-800 mb-3">
-                  Daftar Permission
-                </h4>
+              <div className="rounded-2xl border border-gray-200 bg-gray-50/70 p-5">
+                <div className="mb-4">
+                  <h4 className="text-lg font-bold text-gray-900">
+                    Daftar Permission
+                  </h4>
+                  <p className="mt-1 text-sm text-gray-500">
+                    Pilih hak akses sesuai kebutuhan role pengguna.
+                  </p>
+                </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   {permissionOptions.map((group) => (
                     <div
                       key={group.group}
-                      className="border rounded-lg p-4 bg-gray-50"
+                      className="rounded-2xl border border-gray-200 bg-white p-4"
                     >
-                      <div className="flex items-center justify-between mb-3">
-                        <h5 className="font-semibold text-gray-700">
+                      <div className="mb-3 flex items-center justify-between gap-3">
+                        <h5 className="font-bold text-gray-800">
                           {group.group}
                         </h5>
 
@@ -637,7 +707,7 @@ const User = () => {
                           onClick={() =>
                             handleSelectAllGroup(group.permissions)
                           }
-                          className="text-xs bg-blue-600 text-white px-2 py-1 rounded"
+                          className="rounded-lg bg-blue-100 px-3 py-1.5 text-xs font-bold text-blue-700 transition hover:bg-blue-200"
                         >
                           Pilih/Batal
                         </button>
@@ -647,7 +717,7 @@ const User = () => {
                         {group.permissions.map((permission) => (
                           <label
                             key={permission.key}
-                            className="flex items-center gap-2 text-sm text-gray-700"
+                            className="flex items-center gap-2 rounded-lg px-2 py-1 text-sm text-gray-700 transition hover:bg-gray-50"
                           >
                             <input
                               type="checkbox"
@@ -667,18 +737,18 @@ const User = () => {
                 </div>
               </div>
 
-              <div className="flex justify-end gap-2 pt-2">
+              <div className="flex justify-end gap-2 border-t border-gray-200 pt-5">
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+                  className="rounded-xl bg-gray-100 px-5 py-2.5 text-sm font-bold text-gray-700 transition hover:bg-gray-200"
                 >
                   Batal
                 </button>
 
                 <button
                   type="submit"
-                  className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                  className="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-blue-700"
                 >
                   {isEdit ? "Update" : "Simpan"}
                 </button>

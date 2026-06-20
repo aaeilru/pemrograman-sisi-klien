@@ -5,6 +5,7 @@ import {
   confirmDelete,
   confirmDialog,
 } from "../../../Utils/Helpers/SwalHelpers";
+import TablePagination from "../Components/TablePagination";
 
 /*
 import { useEffect } from "react";
@@ -39,11 +40,34 @@ const Dosen = () => {
   const [dosen, setDosen] = useState([]);
   */
 
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(5);
+  const [search, setSearch] = useState("");
+  const [sortBy, setSortBy] = useState("nama");
+  const [sortOrder, setSortOrder] = useState("asc");
+
+  const queryParams = {
+    q: search,
+    _page: page,
+    _limit: limit,
+    _sort: sortBy,
+    _order: sortOrder,
+  };
+
   const {
-    data: dosen = [],
+    data: result = { data: [], total: 0 },
     isLoading,
     isError,
+  } = useDosen(queryParams);
+
+  const {
+    data: allResult = { data: [], total: 0 },
   } = useDosen();
+
+  const dosen = result.data;
+  const allDosen = allResult.data;
+  const totalCount = result.total;
+  const totalPages = Math.ceil(totalCount / limit) || 1;
 
   const { mutate: storeDosenMutation } = useStoreDosen();
   const { mutate: updateDosenMutation } = useUpdateDosen();
@@ -129,7 +153,7 @@ const Dosen = () => {
         return;
       }
 
-      const nidnExists = dosen.some(
+      const nidnExists = allDosen.some(
         (item) =>
           item.nidn === dosenPayload.nidn &&
           item.id !== form.id
@@ -140,7 +164,7 @@ const Dosen = () => {
         return;
       }
 
-      const emailExists = dosen.some(
+      const emailExists = allDosen.some(
         (item) =>
           item.email === dosenPayload.email &&
           item.id !== form.id
@@ -151,13 +175,13 @@ const Dosen = () => {
         return;
       }
 
-      const result = await confirmDialog({
+      const resultConfirm = await confirmDialog({
         title: "Konfirmasi Update",
         text: `Yakin ingin menyimpan perubahan data dosen "${dosenPayload.nama}"?`,
         confirmText: "Ya, Update",
       });
 
-      if (!result.isConfirmed) return;
+      if (!resultConfirm.isConfirmed) return;
 
       /*
       try {
@@ -190,7 +214,7 @@ const Dosen = () => {
       return;
     }
 
-    const nidnExists = dosen.some(
+    const nidnExists = allDosen.some(
       (item) => item.nidn === dosenPayload.nidn
     );
 
@@ -199,7 +223,7 @@ const Dosen = () => {
       return;
     }
 
-    const emailExists = dosen.some(
+    const emailExists = allDosen.some(
       (item) => item.email === dosenPayload.email
     );
 
@@ -208,13 +232,13 @@ const Dosen = () => {
       return;
     }
 
-    const result = await confirmDialog({
+    const resultConfirm = await confirmDialog({
       title: "Konfirmasi Tambah",
       text: `Yakin ingin menambahkan dosen "${dosenPayload.nama}"?`,
       confirmText: "Ya, Simpan",
     });
 
-    if (!result.isConfirmed) return;
+    if (!resultConfirm.isConfirmed) return;
 
     /*
     try {
@@ -240,15 +264,15 @@ const Dosen = () => {
       return;
     }
 
-    const target = dosen.find((item) => item.id === id);
+    const target = allDosen.find((item) => item.id === id);
     if (!target) return;
 
-    const result = await confirmDelete({
+    const resultConfirm = await confirmDelete({
       title: "Hapus Dosen?",
       text: `Data "${target.nama}" akan dihapus permanen.`,
     });
 
-    if (!result.isConfirmed) {
+    if (!resultConfirm.isConfirmed) {
       toastError("Penghapusan dibatalkan.");
       return;
     }
@@ -268,9 +292,11 @@ const Dosen = () => {
 
   if (!canRead) {
     return (
-      <div className="bg-white shadow rounded-lg p-6">
-        <h2 className="text-xl font-bold text-gray-800">Akses Ditolak</h2>
-        <p className="text-gray-500 mt-2">
+      <div className="rounded-3xl border border-gray-200 bg-white p-7 shadow-sm">
+        <h2 className="text-xl font-bold text-gray-900">
+          Akses Ditolak
+        </h2>
+        <p className="mt-2 text-sm text-gray-500">
           Anda tidak memiliki izin untuk melihat data dosen.
         </p>
       </div>
@@ -279,64 +305,111 @@ const Dosen = () => {
 
   if (isLoading && dosen.length === 0) {
     return (
-      <div className="bg-white shadow rounded-lg p-6">
-        <p className="text-gray-500">Memuat data dosen...</p>
+      <div className="rounded-3xl border border-gray-200 bg-white p-7 shadow-sm">
+        <p className="text-sm font-medium text-gray-500">
+          Memuat data dosen...
+        </p>
       </div>
     );
   }
 
   if (isError) {
     return (
-      <div className="bg-white shadow rounded-lg p-6">
-        <p className="text-red-500">Gagal memuat data dosen.</p>
+      <div className="rounded-3xl border border-gray-200 bg-white p-7 shadow-sm">
+        <p className="text-sm font-medium text-red-500">
+          Gagal memuat data dosen.
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="bg-white shadow rounded-lg p-6">
-      <div className="flex justify-between items-center mb-5">
-        <h2 className="text-2xl font-bold text-gray-800">
-          Daftar Dosen
-        </h2>
+    <div className="rounded-3xl border border-gray-200 bg-white p-7 shadow-sm">
+      <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900">
+            Daftar Dosen
+          </h2>
+        </div>
 
         {canCreate && (
           <button
             onClick={openAddModal}
-            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
+            className="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-blue-700 hover:shadow-md"
           >
             + Tambah Dosen
           </button>
         )}
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm text-gray-700 border-collapse">
+      <TablePagination
+        search={search}
+        setSearch={setSearch}
+        sortBy={sortBy}
+        setSortBy={setSortBy}
+        sortOrder={sortOrder}
+        setSortOrder={setSortOrder}
+        limit={limit}
+        setLimit={setLimit}
+        page={page}
+        setPage={setPage}
+        totalPages={totalPages}
+        totalCount={totalCount}
+        placeholder="Cari nama, NIDN, email, atau program studi..."
+        sortOptions={[
+          { value: "nama", label: "Sort by Nama" },
+          { value: "nidn", label: "Sort by NIDN" },
+          { value: "email", label: "Sort by Email" },
+          { value: "programStudi", label: "Sort by Program Studi" },
+        ]}
+      />
+
+      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
+        <table className="w-full text-sm text-gray-700">
           <thead className="bg-blue-600 text-white">
             <tr>
-              <th className="py-3 px-4 text-left">NIDN</th>
-              <th className="py-3 px-4 text-left">Nama</th>
-              <th className="py-3 px-4 text-left">Email</th>
-              <th className="py-3 px-4 text-left">Program Studi</th>
-              <th className="py-3 px-4 text-center">Status</th>
-              <th className="py-3 px-4 text-center">Aksi</th>
+              <th className="px-5 py-4 text-left font-bold">NIDN</th>
+              <th className="px-5 py-4 text-left font-bold">Nama</th>
+              <th className="px-5 py-4 text-left font-bold">Email</th>
+              <th className="px-5 py-4 text-left font-bold">Program Studi</th>
+              <th className="px-5 py-4 text-center font-bold">Status</th>
+              <th className="px-5 py-4 text-center font-bold">Aksi</th>
             </tr>
           </thead>
 
-          <tbody>
+          <tbody className="divide-y divide-gray-100">
             {dosen.length > 0 ? (
-              dosen.map((item, index) => (
+              dosen.map((item) => (
                 <tr
                   key={item.id}
-                  className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
+                  className="bg-white transition hover:bg-blue-50/60"
                 >
-                  <td className="py-3 px-4">{item.nidn}</td>
-                  <td className="py-3 px-4 font-medium">{item.nama}</td>
-                  <td className="py-3 px-4">{item.email}</td>
-                  <td className="py-3 px-4">{item.programStudi}</td>
-                  <td className="py-3 px-4 text-center">
+                  <td className="px-5 py-4 font-semibold text-gray-700">
+                    {item.nidn}
+                  </td>
+
+                  <td className="px-5 py-4">
+                    <div>
+                      <p className="font-bold text-gray-800">
+                        {item.nama}
+                      </p>
+                      <p className="text-xs text-gray-400">
+                        Dosen
+                      </p>
+                    </div>
+                  </td>
+
+                  <td className="px-5 py-4 text-gray-600">
+                    {item.email}
+                  </td>
+
+                  <td className="px-5 py-4 text-gray-600">
+                    {item.programStudi}
+                  </td>
+
+                  <td className="px-5 py-4 text-center">
                     <span
-                      className={`inline-flex items-center justify-center px-4 py-1 rounded-full text-sm font-bold ${
+                      className={`inline-flex items-center justify-center rounded-full px-4 py-1 text-xs font-bold ${
                         item.status
                           ? "bg-green-100 text-green-700"
                           : "bg-red-100 text-red-700"
@@ -345,34 +418,44 @@ const Dosen = () => {
                       {item.status ? "Aktif" : "Tidak Aktif"}
                     </span>
                   </td>
-                  <td className="py-3 px-4 text-center space-x-2">
-                    {canUpdate && (
-                      <button
-                        onClick={() => openEditModal(item)}
-                        className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
-                      >
-                        Edit
-                      </button>
-                    )}
 
-                    {canDelete && (
-                      <button
-                        onClick={() => handleDelete(item.id)}
-                        className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
-                      >
-                        Hapus
-                      </button>
-                    )}
+                  <td className="px-5 py-4">
+                    <div className="flex justify-center gap-2">
+                      {canUpdate && (
+                        <button
+                          onClick={() => openEditModal(item)}
+                          className="rounded-lg bg-yellow-100 px-3 py-1.5 text-xs font-bold text-yellow-700 transition hover:bg-yellow-200"
+                        >
+                          Edit
+                        </button>
+                      )}
+
+                      {canDelete && (
+                        <button
+                          onClick={() => handleDelete(item.id)}
+                          className="rounded-lg bg-red-100 px-3 py-1.5 text-xs font-bold text-red-700 transition hover:bg-red-200"
+                        >
+                          Hapus
+                        </button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td
-                  colSpan="6"
-                  className="py-6 text-center text-gray-400 italic"
-                >
-                  Belum ada data dosen.
+                <td colSpan="6" className="px-5 py-12 text-center">
+                  <div className="flex flex-col items-center justify-center">
+                    <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-gray-100">
+                      <span className="text-2xl text-gray-400">!</span>
+                    </div>
+                    <p className="font-semibold text-gray-500">
+                      Belum ada data dosen.
+                    </p>
+                    <p className="mt-1 text-xs text-gray-400">
+                      Tambahkan data dosen atau ubah kata kunci pencarian.
+                    </p>
+                  </div>
                 </td>
               </tr>
             )}
@@ -381,9 +464,9 @@ const Dosen = () => {
       </div>
 
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-lg w-full max-w-xl p-6">
-            <h3 className="text-xl font-bold text-gray-800 mb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+          <div className="w-full max-w-xl rounded-3xl bg-white p-7 shadow-xl">
+            <h3 className="mb-5 text-xl font-bold text-gray-900">
               {isEdit ? "Edit Dosen" : "Tambah Dosen"}
             </h3>
 
@@ -393,7 +476,7 @@ const Dosen = () => {
                 placeholder="NIDN"
                 value={form.nidn}
                 onChange={handleChange}
-                className="w-full border px-3 py-2 rounded"
+                className="w-full rounded-xl border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
                 required
               />
 
@@ -402,7 +485,7 @@ const Dosen = () => {
                 placeholder="Nama Dosen"
                 value={form.nama}
                 onChange={handleChange}
-                className="w-full border px-3 py-2 rounded"
+                className="w-full rounded-xl border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
                 required
               />
 
@@ -412,7 +495,7 @@ const Dosen = () => {
                 placeholder="Email Dosen"
                 value={form.email}
                 onChange={handleChange}
-                className="w-full border px-3 py-2 rounded"
+                className="w-full rounded-xl border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
                 required
               />
 
@@ -421,12 +504,12 @@ const Dosen = () => {
                 placeholder="Program Studi"
                 value={form.programStudi}
                 onChange={handleChange}
-                className="w-full border px-3 py-2 rounded"
+                className="w-full rounded-xl border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
                 required
               />
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="mb-2 block text-sm font-semibold text-gray-700">
                   Status
                 </label>
 
@@ -455,18 +538,18 @@ const Dosen = () => {
                 </div>
               </div>
 
-              <div className="flex justify-end gap-2 pt-4 border-t">
+              <div className="flex justify-end gap-2 border-t border-gray-200 pt-5">
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+                  className="rounded-xl bg-gray-100 px-5 py-2.5 text-sm font-bold text-gray-700 transition hover:bg-gray-200"
                 >
                   Batal
                 </button>
 
                 <button
                   type="submit"
-                  className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                  className="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-blue-700"
                 >
                   {isEdit ? "Update" : "Simpan"}
                 </button>

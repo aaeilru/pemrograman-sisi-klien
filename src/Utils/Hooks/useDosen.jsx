@@ -14,11 +14,17 @@ import {
   toastError,
 } from "../Helpers/ToastHelpers";
 
-export const useDosen = () => {
+export const useDosen = (params = {}) => {
   return useQuery({
-    queryKey: ["dosen"],
-    queryFn: getAllDosen,
-    select: (res) => res?.data ?? [],
+    queryKey: ["dosen", params],
+    queryFn: () => getAllDosen(params),
+    select: (res) => ({
+      data: res?.data ?? [],
+      total: Number(res?.headers?.["x-total-count"] ?? 0),
+    }),
+    keepPreviousData: true,
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
   });
 };
 
@@ -28,17 +34,10 @@ export const useStoreDosen = () => {
   return useMutation({
     mutationFn: storeDosen,
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["dosen"],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["user"],
-      });
+      queryClient.invalidateQueries({ queryKey: ["dosen"] });
       toastSuccess("Data dosen berhasil ditambahkan.");
     },
-    onError: () => {
-      toastError("Gagal menambahkan data dosen.");
-    },
+    onError: () => toastError("Gagal menambahkan data dosen."),
   });
 };
 
@@ -48,17 +47,10 @@ export const useUpdateDosen = () => {
   return useMutation({
     mutationFn: ({ id, data }) => updateDosen(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["dosen"],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["user"],
-      });
+      queryClient.invalidateQueries({ queryKey: ["dosen"] });
       toastSuccess("Data dosen berhasil diupdate.");
     },
-    onError: () => {
-      toastError("Gagal mengupdate data dosen.");
-    },
+    onError: () => toastError("Gagal mengupdate data dosen."),
   });
 };
 
@@ -68,16 +60,9 @@ export const useDeleteDosen = () => {
   return useMutation({
     mutationFn: deleteDosen,
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["dosen"],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["user"],
-      });
+      queryClient.invalidateQueries({ queryKey: ["dosen"] });
       toastSuccess("Data dosen berhasil dihapus.");
     },
-    onError: () => {
-      toastError("Gagal menghapus data dosen.");
-    },
+    onError: () => toastError("Gagal menghapus data dosen."),
   });
 };
