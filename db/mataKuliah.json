@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "kode": "IF001",
+    "nama": "Pemrograman Web",
+    "sks": 3,
+    "semester": 4,
+    "dosenId": 1,
+    "dosen": "Dr. Randy Savero",
+    "status": true
+  }
+]

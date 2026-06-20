@@ -1,0 +1,10 @@
+[
+  {
+    "id": 1,
+    "nidn": "0612345678",
+    "nama": "Dr. Randy Savero",
+    "email": "randy@gmail.com",
+    "programStudi": "Teknik Informatika",
+    "status": true
+  }
+]

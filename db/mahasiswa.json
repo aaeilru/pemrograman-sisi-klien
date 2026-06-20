@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1,
+    "nim": "A11.2023.15267",
+    "nama": "Susi Susanti",
+    "programStudi": "Teknik Informatika",
+    "semester": 6,
+    "email": "susi@mail.com",
+    "alamat": "Semarang",
+    "status": true
+  },
+  {
+    "id": 2,
+    "nim": "A11.2023.15268",
+    "nama": "Budi Santoso",
+    "programStudi": "Sistem Informasi",
+    "semester": 4,
+    "email": "budi@mail.com",
+    "alamat": "Kendal",
+    "status": true
+  }
+]

@@ -1,0 +1,18 @@
+[
+  {
+    "id": 1,
+    "nama": "IF-01",
+    "programStudi": "Teknik Informatika",
+    "semester": 6,
+    "waliKelas": "Dr. Randy Savero",
+    "status": true
+  },
+  {
+    "id": 2,
+    "nama": "SI-02",
+    "programStudi": "Sistem Informasi",
+    "semester": 4,
+    "waliKelas": "Dr. Budi Santoso",
+    "status": true
+  }
+]

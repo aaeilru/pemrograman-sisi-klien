@@ -1,0 +1,162 @@
+{
+  "dosen": [
+    {
+      "id": "1",
+      "nidn": "0612345678",
+      "nama": "Dr. Randy Savero",
+      "email": "randy@gmail.com",
+      "programStudi": "Teknik Informatika",
+      "status": true
+    },
+    {
+      "nidn": "0611111111",
+      "nama": "TEDDY",
+      "email": "teddy@gmail.com",
+      "programStudi": "ILMU KOMUNIKASI",
+      "status": false,
+      "id": "gcwcxwNo97c"
+    }
+  ],
+  "kelas": [
+    {
+      "id": "1",
+      "nama": "IF-01",
+      "programStudi": "Teknik Informatika",
+      "semester": 6,
+      "waliKelas": "Dr. Randy Savero",
+      "status": true
+    },
+    {
+      "id": "2",
+      "nama": "SI-02",
+      "programStudi": "Sistem Informasi",
+      "semester": 4,
+      "waliKelas": "Dr. Budi Santoso",
+      "status": true
+    },
+    {
+      "nama": "IK-01",
+      "programStudi": "ILMU KOMUNIKASI",
+      "semester": 2,
+      "waliKelas": "TEDDY",
+      "status": false,
+      "id": "E72kqc-liQ8"
+    }
+  ],
+  "mahasiswa": [
+    {
+      "id": "1",
+      "nim": "A11.2023.15267",
+      "nama": "Susi Susanti",
+      "programStudi": "Teknik Informatika",
+      "semester": 6,
+      "email": "susi@mail.com",
+      "alamat": "Semarang",
+      "status": true
+    },
+    {
+      "id": "2",
+      "nim": "A11.2023.15268",
+      "nama": "Budi Santoso",
+      "programStudi": "Sistem Informasi",
+      "semester": 4,
+      "email": "budi@mail.com",
+      "alamat": "Kendal",
+      "status": true
+    },
+    {
+      "nim": "A11.2023.15263",
+      "nama": "AURELIA DWI WIJAYANTI",
+      "programStudi": "TEKNIK INFORMATIKA",
+      "semester": 6,
+      "email": "aurelia@gmail.com",
+      "alamat": "Semarang",
+      "status": true,
+      "id": "JTMOs74p16w"
+    }
+  ],
+  "mataKuliah": [
+    {
+      "id": "1",
+      "kode": "IF001",
+      "nama": "Pemrograman Web",
+      "sks": 3,
+      "semester": 4,
+      "dosenId": 1,
+      "dosen": "Dr. Randy Savero",
+      "status": true
+    }
+  ],
+  "user": [
+    {
+      "id": "1",
+      "name": "Administrator",
+      "email": "admin@gmail.com",
+      "password": "admin",
+      "role": "admin",
+      "permission": [
+        "dashboard.page",
+        "mahasiswa.page",
+        "mahasiswa.read",
+        "mahasiswa.create",
+        "mahasiswa.update",
+        "mahasiswa.delete",
+        "dosen.page",
+        "dosen.read",
+        "dosen.create",
+        "dosen.update",
+        "dosen.delete",
+        "matakuliah.page",
+        "matakuliah.read",
+        "matakuliah.create",
+        "matakuliah.update",
+        "matakuliah.delete",
+        "user.page",
+        "user.read",
+        "user.create",
+        "user.update",
+        "user.delete",
+        "kelas.page",
+        "kelas.read",
+        "kelas.create",
+        "kelas.update",
+        "kelas.delete"
+      ]
+    },
+    {
+      "id": "2",
+      "name": "Mahasiswa",
+      "email": "mahasiswa@gmail.com",
+      "password": "password",
+      "role": "mahasiswa",
+      "permission": [
+        "dashboard.page",
+        "matakuliah.page",
+        "matakuliah.create",
+        "kelas.page",
+        "kelas.read"
+      ]
+    },
+    {
+      "id": "3",
+      "name": "Dr. Randy Savero",
+      "email": "randy@gmail.com",
+      "password": "password",
+      "role": "dosen",
+      "dosenId": 1,
+      "permission": [
+        "dashboard.page",
+        "mahasiswa.page",
+        "mahasiswa.read",
+        "matakuliah.page",
+        "matakuliah.read",
+        "matakuliah.create",
+        "matakuliah.update",
+        "matakuliah.delete",
+        "kelas.page",
+        "kelas.read"
+      ]
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}
