@@ -54,11 +54,196 @@ const tooltipStyle = {
 const toArray = (value) => {
   if (Array.isArray(value)) return value;
   if (Array.isArray(value?.data)) return value.data;
+  if (Array.isArray(value?.data?.data)) return value.data.data;
   return [];
 };
 
-const findById = (items, id) => {
-  return items.find((item) => Number(item.id) === Number(id));
+const getValue = (object, keys) => {
+  for (const key of keys) {
+    if (object?.[key] !== undefined && object?.[key] !== null) {
+      return object[key];
+    }
+  }
+
+  return null;
+};
+
+const normalizeString = (value) => {
+  return String(value ?? "").trim().toLowerCase();
+};
+
+const getMataKuliahIdFromKelas = (kelasItem) => {
+  return getValue(kelasItem, [
+    "mataKuliahId",
+    "mata_kuliah_id",
+    "mataKuliah_id",
+    "matakuliahId",
+    "matakuliah_id",
+    "mataKuliahID",
+    "mata_kuliah",
+    "mataKuliah",
+    "matkulId",
+    "matkul_id",
+    "courseId",
+    "course_id",
+    "kodeMataKuliah",
+    "kode_mata_kuliah",
+    "kode",
+  ]);
+};
+
+const getDosenIdFromKelas = (kelasItem) => {
+  return getValue(kelasItem, [
+    "dosenId",
+    "dosen_id",
+    "dosenID",
+    "lecturerId",
+    "lecturer_id",
+    "pengampuId",
+    "pengampu_id",
+    "dosen",
+  ]);
+};
+
+const getNamaMataKuliah = (matkul) => {
+  return getValue(matkul, [
+    "nama",
+    "namaMataKuliah",
+    "nama_mata_kuliah",
+    "mataKuliah",
+    "matakuliah",
+    "name",
+    "title",
+  ]);
+};
+
+const getKodeMataKuliah = (matkul) => {
+  return getValue(matkul, [
+    "kode",
+    "kodeMataKuliah",
+    "kode_mata_kuliah",
+    "kode_mk",
+    "code",
+  ]);
+};
+
+const getSksMataKuliah = (matkul) => {
+  return Number(
+    getValue(matkul, [
+      "sks",
+      "jumlahSks",
+      "jumlah_sks",
+      "totalSks",
+      "total_sks",
+      "credit",
+      "credits",
+    ]) ?? 0
+  );
+};
+
+const getHariKelas = (kelasItem) => {
+  return (
+    getValue(kelasItem, [
+      "hari",
+      "day",
+      "hariKuliah",
+      "hari_kuliah",
+    ]) || "-"
+  );
+};
+
+const getJamMulaiKelas = (kelasItem) => {
+  return getValue(kelasItem, [
+    "jamMulai",
+    "jam_mulai",
+    "waktuMulai",
+    "waktu_mulai",
+    "startTime",
+    "start_time",
+  ]);
+};
+
+const getJamSelesaiKelas = (kelasItem) => {
+  return getValue(kelasItem, [
+    "jamSelesai",
+    "jam_selesai",
+    "waktuSelesai",
+    "waktu_selesai",
+    "endTime",
+    "end_time",
+  ]);
+};
+
+const getJamKelas = (kelasItem) => {
+  const jamMulai = getJamMulaiKelas(kelasItem);
+  const jamSelesai = getJamSelesaiKelas(kelasItem);
+
+  if (jamMulai && jamSelesai) {
+    return `${jamMulai} - ${jamSelesai}`;
+  }
+
+  return getValue(kelasItem, ["jam", "waktu", "time"]) || "-";
+};
+
+const getRuangKelas = (kelasItem) => {
+  return (
+    getValue(kelasItem, [
+      "ruang",
+      "room",
+      "kelasRuang",
+      "kelas_ruang",
+    ]) || "-"
+  );
+};
+
+const getMataKuliahFromKelas = (mataKuliah, kelasItem) => {
+  const mataKuliahId = getMataKuliahIdFromKelas(kelasItem);
+
+  if (typeof mataKuliahId === "object" && mataKuliahId !== null) {
+    return mataKuliahId;
+  }
+
+  return (
+    mataKuliah.find((item) => {
+      const itemId = getValue(item, [
+        "id",
+        "mataKuliahId",
+        "matakuliahId",
+      ]);
+      const itemKode = getKodeMataKuliah(item);
+      const itemNama = getNamaMataKuliah(item);
+
+      return (
+        Number(itemId) === Number(mataKuliahId) ||
+        normalizeString(itemId) === normalizeString(mataKuliahId) ||
+        normalizeString(itemKode) === normalizeString(mataKuliahId) ||
+        normalizeString(itemNama) === normalizeString(mataKuliahId)
+      );
+    }) || null
+  );
+};
+
+const getDosenFromKelas = (dosen, kelasItem) => {
+  const dosenId = getDosenIdFromKelas(kelasItem);
+
+  if (typeof dosenId === "object" && dosenId !== null) {
+    return dosenId;
+  }
+
+  return (
+    dosen.find((item) => {
+      const itemId = getValue(item, ["id", "dosenId"]);
+      const itemNama = getValue(item, ["nama", "name"]);
+      const itemEmail = getValue(item, ["email"]);
+
+      return (
+        Number(itemId) === Number(dosenId) ||
+        normalizeString(itemId) === normalizeString(dosenId) ||
+        normalizeString(itemNama) === normalizeString(dosenId) ||
+        normalizeString(itemEmail) === normalizeString(dosenId)
+      );
+    }) || null
+  );
 };
 
 const DashboardAdmin = ({ chartData }) => {
@@ -81,6 +266,10 @@ const DashboardAdmin = ({ chartData }) => {
         <h2 className="text-2xl font-bold text-slate-900">
           Dashboard Admin
         </h2>
+        <p className="mt-1 text-sm text-slate-500">
+          Visualisasi data akademik menggunakan Recharts dan React Query.
+        </p>
+
         <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-5">
           <div className="rounded-2xl border border-sky-100 bg-gradient-to-br from-sky-50 to-blue-50 p-5">
             <p className="text-sm font-semibold text-sky-600">
@@ -134,6 +323,10 @@ const DashboardAdmin = ({ chartData }) => {
           <h3 className="text-lg font-bold text-slate-900">
             Mahasiswa per Fakultas
           </h3>
+          <p className="mt-1 text-sm text-slate-500">
+            Bar chart dengan warna pastel berbeda untuk tiap fakultas.
+          </p>
+
           <div className="mt-5 h-[320px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={students}>
@@ -165,6 +358,10 @@ const DashboardAdmin = ({ chartData }) => {
           <h3 className="text-lg font-bold text-slate-900">
             Rasio Gender Mahasiswa
           </h3>
+          <p className="mt-1 text-sm text-slate-500">
+            Perempuan ditampilkan dengan warna pink pastel.
+          </p>
+
           <div className="mt-5 h-[320px]">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -197,6 +394,10 @@ const DashboardAdmin = ({ chartData }) => {
           <h3 className="text-lg font-bold text-slate-900">
             Tren Pendaftaran Mahasiswa
           </h3>
+          <p className="mt-1 text-sm text-slate-500">
+            Line chart untuk melihat pertumbuhan pendaftaran dari tahun ke tahun.
+          </p>
+
           <div className="mt-5 h-[320px]">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={registrations}>
@@ -230,6 +431,10 @@ const DashboardAdmin = ({ chartData }) => {
           <h3 className="text-lg font-bold text-slate-900">
             Distribusi Nilai per Jurusan
           </h3>
+          <p className="mt-1 text-sm text-slate-500">
+            Radar chart untuk membandingkan jumlah nilai A, B, dan C.
+          </p>
+
           <div className="mt-5 h-[320px]">
             <ResponsiveContainer width="100%" height="100%">
               <RadarChart data={gradeDistribution}>
@@ -243,7 +448,6 @@ const DashboardAdmin = ({ chartData }) => {
                   stroke="#94a3b8"
                   tick={{ fill: "#94a3b8", fontSize: 11 }}
                 />
-
                 <Radar
                   name="Nilai A"
                   dataKey="A"
@@ -251,7 +455,6 @@ const DashboardAdmin = ({ chartData }) => {
                   fill="#93c5fd"
                   fillOpacity={0.45}
                 />
-
                 <Radar
                   name="Nilai B"
                   dataKey="B"
@@ -259,7 +462,6 @@ const DashboardAdmin = ({ chartData }) => {
                   fill="#c4b5fd"
                   fillOpacity={0.35}
                 />
-
                 <Radar
                   name="Nilai C"
                   dataKey="C"
@@ -267,7 +469,6 @@ const DashboardAdmin = ({ chartData }) => {
                   fill="#fdba74"
                   fillOpacity={0.3}
                 />
-
                 <Tooltip contentStyle={tooltipStyle} />
                 <Legend />
               </RadarChart>
@@ -279,7 +480,10 @@ const DashboardAdmin = ({ chartData }) => {
           <h3 className="text-lg font-bold text-slate-900">
             Jumlah Dosen Berdasarkan Pangkat
           </h3>
-          
+          <p className="mt-1 text-sm text-slate-500">
+            Area chart untuk menampilkan jumlah dosen berdasarkan pangkat akademik.
+          </p>
+
           <div className="mt-5 h-[320px]">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={lecturerRanks}>
@@ -334,129 +538,6 @@ const DashboardAdmin = ({ chartData }) => {
   );
 };
 
-const DashboardDosen = ({ user, dosen, mataKuliah, rencanaStudi }) => {
-  const currentDosen =
-    dosen.find((item) => Number(item.id) === Number(user?.dosenId)) ||
-    dosen.find((item) => item.email === user?.email) ||
-    dosen.find((item) => item.nama === user?.name);
-
-  const jadwalMengajar = rencanaStudi.filter(
-    (item) => Number(item.dosenId) === Number(currentDosen?.id)
-  );
-
-  const totalSksMengajar = jadwalMengajar.reduce((total, item) => {
-    const matkul = findById(mataKuliah, item.mataKuliahId);
-    return total + Number(matkul?.sks ?? 0);
-  }, 0);
-
-  const maxSks = Number(currentDosen?.maxSks ?? 12);
-  const sisaSks = Math.max(maxSks - totalSksMengajar, 0);
-
-  return (
-    <div className="space-y-6">
-      <div className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
-        <h2 className="text-2xl font-bold text-slate-900">
-          Dashboard Dosen
-        </h2>
-        <p className="mt-1 text-sm text-slate-500">
-          Ringkasan jadwal mengajar dan kapasitas SKS dosen.
-        </p>
-
-        <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-4">
-          <div className="rounded-2xl border border-blue-100 bg-blue-50 p-5">
-            <p className="text-sm font-semibold text-blue-600">
-              Kelas Diampu
-            </p>
-            <h3 className="mt-2 text-3xl font-bold text-slate-900">
-              {jadwalMengajar.length}
-            </h3>
-          </div>
-
-          <div className="rounded-2xl border border-pink-100 bg-pink-50 p-5">
-            <p className="text-sm font-semibold text-pink-600">
-              Total SKS Diampu
-            </p>
-            <h3 className="mt-2 text-3xl font-bold text-slate-900">
-              {totalSksMengajar}
-            </h3>
-          </div>
-
-          <div className="rounded-2xl border border-indigo-100 bg-indigo-50 p-5">
-            <p className="text-sm font-semibold text-indigo-600">
-              Max SKS
-            </p>
-            <h3 className="mt-2 text-3xl font-bold text-slate-900">
-              {maxSks}
-            </h3>
-          </div>
-
-          <div className="rounded-2xl border border-orange-100 bg-orange-50 p-5">
-            <p className="text-sm font-semibold text-orange-600">
-              Sisa SKS
-            </p>
-            <h3 className="mt-2 text-3xl font-bold text-slate-900">
-              {sisaSks}
-            </h3>
-          </div>
-        </div>
-      </div>
-
-      <div className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
-        <h3 className="text-lg font-bold text-slate-900">
-          Jadwal Mengajar
-        </h3>
-        <p className="mt-1 text-sm text-slate-500">
-          Daftar mata kuliah yang sedang diampu.
-        </p>
-
-        <div className="mt-5 overflow-hidden rounded-2xl border border-slate-200">
-          <table className="w-full text-sm text-slate-700">
-            <thead className="bg-blue-600 text-white">
-              <tr>
-                <th className="px-5 py-4 text-left">Mata Kuliah</th>
-                <th className="px-5 py-4 text-center">SKS</th>
-                <th className="px-5 py-4 text-center">Jumlah Mahasiswa</th>
-              </tr>
-            </thead>
-
-            <tbody className="divide-y divide-slate-100">
-              {jadwalMengajar.length > 0 ? (
-                jadwalMengajar.map((item) => {
-                  const matkul = findById(mataKuliah, item.mataKuliahId);
-                  const totalMahasiswa = item.mahasiswaIds?.length || 0;
-
-                  return (
-                    <tr key={item.id} className="hover:bg-blue-50/60">
-                      <td className="px-5 py-4 font-bold text-slate-800">
-                        {matkul?.nama || "-"}
-                      </td>
-                      <td className="px-5 py-4 text-center">
-                        {matkul?.sks || 0}
-                      </td>
-                      <td className="px-5 py-4 text-center">
-                        {totalMahasiswa}
-                      </td>
-                    </tr>
-                  );
-                })
-              ) : (
-                <tr>
-                  <td
-                    colSpan="3"
-                    className="px-5 py-8 text-center text-slate-400"
-                  >
-                    Belum ada jadwal mengajar.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  );
-};
-
 const DashboardMahasiswa = ({
   user,
   mahasiswa,
@@ -476,8 +557,8 @@ const DashboardMahasiswa = ({
   );
 
   const totalSks = jadwalKuliah.reduce((total, item) => {
-    const matkul = findById(mataKuliah, item.mataKuliahId);
-    return total + Number(matkul?.sks ?? 0);
+    const matkul = getMataKuliahFromKelas(mataKuliah, item);
+    return total + getSksMataKuliah(matkul);
   }, 0);
 
   const maxSks = Number(currentMahasiswa?.maxSks ?? 24);
@@ -540,32 +621,56 @@ const DashboardMahasiswa = ({
           Daftar mata kuliah yang sedang diambil.
         </p>
 
-        <div className="mt-5 overflow-hidden rounded-2xl border border-slate-200">
-          <table className="w-full text-sm text-slate-700">
+        <div className="mt-5 overflow-x-auto rounded-2xl border border-slate-200">
+          <table className="w-full min-w-[900px] text-sm text-slate-700">
             <thead className="bg-blue-600 text-white">
               <tr>
                 <th className="px-5 py-4 text-left">Mata Kuliah</th>
                 <th className="px-5 py-4 text-center">SKS</th>
                 <th className="px-5 py-4 text-left">Dosen</th>
+                <th className="px-5 py-4 text-left">Hari</th>
+                <th className="px-5 py-4 text-left">Jam</th>
+                <th className="px-5 py-4 text-left">Ruang</th>
               </tr>
             </thead>
 
             <tbody className="divide-y divide-slate-100">
               {jadwalKuliah.length > 0 ? (
                 jadwalKuliah.map((item) => {
-                  const matkul = findById(mataKuliah, item.mataKuliahId);
-                  const dosenPengampu = findById(dosen, item.dosenId);
+                  const matkul = getMataKuliahFromKelas(mataKuliah, item);
+                  const dosenPengampu = getDosenFromKelas(dosen, item);
 
                   return (
                     <tr key={item.id} className="hover:bg-blue-50/60">
-                      <td className="px-5 py-4 font-bold text-slate-800">
-                        {matkul?.nama || "-"}
+                      <td className="px-5 py-4">
+                        <p className="font-bold text-slate-800">
+                          {getNamaMataKuliah(matkul) || "-"}
+                        </p>
+                        <p className="text-xs text-slate-400">
+                          Kode: {getKodeMataKuliah(matkul) || "-"}
+                        </p>
                       </td>
+
                       <td className="px-5 py-4 text-center">
-                        {matkul?.sks || 0}
+                        <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-bold text-blue-700">
+                          {getSksMataKuliah(matkul)} SKS
+                        </span>
                       </td>
+
                       <td className="px-5 py-4">
                         {dosenPengampu?.nama || "-"}
+                      </td>
+
+                      <td className="px-5 py-4">
+                        {getHariKelas(item)}
+                      </td>
+
+                      <td className="px-5 py-4">
+                        {getJamKelas(item)}
+                      </td>
+
+                      <td className="px-5 py-4">
+                        {getRuangKelas(item)}
                       </td>
                     </tr>
                   );
@@ -573,10 +678,159 @@ const DashboardMahasiswa = ({
               ) : (
                 <tr>
                   <td
-                    colSpan="3"
+                    colSpan="6"
                     className="px-5 py-8 text-center text-slate-400"
                   >
                     Belum ada jadwal kuliah.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const DashboardDosen = ({ user, dosen, mataKuliah, rencanaStudi }) => {
+  const currentDosen =
+    dosen.find((item) => Number(item.id) === Number(user?.dosenId)) ||
+    dosen.find((item) => item.email === user?.email) ||
+    dosen.find((item) => item.nama === user?.name);
+
+  const jadwalMengajar = rencanaStudi.filter(
+    (item) => Number(getDosenIdFromKelas(item)) === Number(currentDosen?.id)
+  );
+
+  const totalSksMengajar = jadwalMengajar.reduce((total, item) => {
+    const matkul = getMataKuliahFromKelas(mataKuliah, item);
+    return total + getSksMataKuliah(matkul);
+  }, 0);
+
+  const maxSks = Number(currentDosen?.maxSks ?? 12);
+  const sisaSks = Math.max(maxSks - totalSksMengajar, 0);
+
+  return (
+    <div className="space-y-6">
+      <div className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
+        <h2 className="text-2xl font-bold text-slate-900">
+          Dashboard Dosen
+        </h2>
+        <p className="mt-1 text-sm text-slate-500">
+          Ringkasan jadwal mengajar dan kapasitas SKS dosen.
+        </p>
+
+        <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-4">
+          <div className="rounded-2xl border border-blue-100 bg-blue-50 p-5">
+            <p className="text-sm font-semibold text-blue-600">
+              Kelas Diampu
+            </p>
+            <h3 className="mt-2 text-3xl font-bold text-slate-900">
+              {jadwalMengajar.length}
+            </h3>
+          </div>
+
+          <div className="rounded-2xl border border-pink-100 bg-pink-50 p-5">
+            <p className="text-sm font-semibold text-pink-600">
+              Total SKS Diampu
+            </p>
+            <h3 className="mt-2 text-3xl font-bold text-slate-900">
+              {totalSksMengajar}
+            </h3>
+          </div>
+
+          <div className="rounded-2xl border border-indigo-100 bg-indigo-50 p-5">
+            <p className="text-sm font-semibold text-indigo-600">
+              Max SKS
+            </p>
+            <h3 className="mt-2 text-3xl font-bold text-slate-900">
+              {maxSks}
+            </h3>
+          </div>
+
+          <div className="rounded-2xl border border-orange-100 bg-orange-50 p-5">
+            <p className="text-sm font-semibold text-orange-600">
+              Sisa SKS
+            </p>
+            <h3 className="mt-2 text-3xl font-bold text-slate-900">
+              {sisaSks}
+            </h3>
+          </div>
+        </div>
+      </div>
+
+      <div className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
+        <h3 className="text-lg font-bold text-slate-900">
+          Jadwal Mengajar
+        </h3>
+        <p className="mt-1 text-sm text-slate-500">
+          Daftar mata kuliah yang sedang diampu.
+        </p>
+
+        <div className="mt-5 overflow-x-auto rounded-2xl border border-slate-200">
+          <table className="w-full min-w-[950px] text-sm text-slate-700">
+            <thead className="bg-blue-600 text-white">
+              <tr>
+                <th className="px-5 py-4 text-left">Mata Kuliah</th>
+                <th className="px-5 py-4 text-center">SKS</th>
+                <th className="px-5 py-4 text-left">Hari</th>
+                <th className="px-5 py-4 text-left">Jam</th>
+                <th className="px-5 py-4 text-left">Ruang</th>
+                <th className="px-5 py-4 text-center">
+                  Jumlah Mahasiswa
+                </th>
+              </tr>
+            </thead>
+
+            <tbody className="divide-y divide-slate-100">
+              {jadwalMengajar.length > 0 ? (
+                jadwalMengajar.map((item) => {
+                  const matkul = getMataKuliahFromKelas(mataKuliah, item);
+                  const totalMahasiswa = item.mahasiswaIds?.length || 0;
+
+                  return (
+                    <tr key={item.id} className="hover:bg-blue-50/60">
+                      <td className="px-5 py-4">
+                        <p className="font-bold text-slate-800">
+                          {getNamaMataKuliah(matkul) || "-"}
+                        </p>
+                        <p className="text-xs text-slate-400">
+                          Kode: {getKodeMataKuliah(matkul) || "-"}
+                        </p>
+                      </td>
+
+                      <td className="px-5 py-4 text-center">
+                        <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-bold text-blue-700">
+                          {getSksMataKuliah(matkul)} SKS
+                        </span>
+                      </td>
+
+                      <td className="px-5 py-4">
+                        {getHariKelas(item)}
+                      </td>
+
+                      <td className="px-5 py-4">
+                        {getJamKelas(item)}
+                      </td>
+
+                      <td className="px-5 py-4">
+                        {getRuangKelas(item)}
+                      </td>
+
+                      <td className="px-5 py-4 text-center">
+                        {totalMahasiswa}
+                      </td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td
+                    colSpan="6"
+                    className="px-5 py-8 text-center text-slate-400"
+                  >
+                    Belum ada jadwal mengajar.
                   </td>
                 </tr>
               )}
@@ -638,17 +892,6 @@ const Dashboard = () => {
     );
   }
 
-  if (user?.role === "dosen") {
-    return (
-      <DashboardDosen
-        user={user}
-        dosen={dosen}
-        mataKuliah={mataKuliah}
-        rencanaStudi={rencanaStudi}
-      />
-    );
-  }
-
   if (user?.role === "mahasiswa") {
     return (
       <DashboardMahasiswa
@@ -657,6 +900,17 @@ const Dashboard = () => {
         mataKuliah={mataKuliah}
         rencanaStudi={rencanaStudi}
         dosen={dosen}
+      />
+    );
+  }
+
+  if (user?.role === "dosen") {
+    return (
+      <DashboardDosen
+        user={user}
+        dosen={dosen}
+        mataKuliah={mataKuliah}
+        rencanaStudi={rencanaStudi}
       />
     );
   }
