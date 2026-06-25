@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "mataKuliahId": 1,
+    "dosenId": 1,
+    "hari": "Senin",
+    "jamMulai": "08:00",
+    "jamSelesai": "10:30",
+    "ruang": "H.3.1",
+    "mahasiswaIds": [3]
+  },
+  {
+    "id": 2,
+    "mataKuliahId": 2,
+    "dosenId": 2,
+    "hari": "Selasa",
+    "jamMulai": "10:30",
+    "jamSelesai": "13:00",
+    "ruang": "H.4.2",
+    "mahasiswaIds": []
+  },
+  {
+    "id": 3,
+    "mataKuliahId": 3,
+    "dosenId": 3,
+    "hari": "Rabu",
+    "jamMulai": "13:00",
+    "jamSelesai": "14:40",
+    "ruang": "D.2.4",
+    "mahasiswaIds": []
+  },
+  {
+    "id": 4,
+    "mataKuliahId": 4,
+    "dosenId": 1,
+    "hari": "Kamis",
+    "jamMulai": "08:00",
+    "jamSelesai": "10:30",
+    "ruang": "Lab Komputer 1",
+    "mahasiswaIds": []
+  }
+]

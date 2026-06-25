@@ -27,6 +27,10 @@ import {
   QueryClientProvider,
 } from "@tanstack/react-query";
 import Kelas from "./pages/Admin/Kelas/Kelas";
+import RencanaStudi from "./pages/Admin/RencanaStudi/RencanaStudi";
+import JadwalKuliah from "./pages/Admin/JadwalKuliah/JadwalKuliah";
+
+
 
 const queryClient = new QueryClient();
 const router = createBrowserRouter([
@@ -59,6 +63,8 @@ const router = createBrowserRouter([
       { path: "mata-kuliah", element: <MataKuliah /> },
       { path: "user", element: <User /> },
       { path: "kelas", element: <Kelas /> },
+      { path: "rencana-studi", element: <RencanaStudi /> },
+      { path: "jadwal-kuliah", element: <JadwalKuliah /> },
     ],
   },
   { path: "*", element: <PageNotFound /> },

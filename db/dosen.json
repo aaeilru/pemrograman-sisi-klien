@@ -5,6 +5,25 @@
     "nama": "Dr. Randy Savero",
     "email": "randy@gmail.com",
     "programStudi": "Teknik Informatika",
+    "maxSks": 12,
+    "status": true
+  },
+  {
+    "id": 2,
+    "nidn": "0623456789",
+    "nama": "Dewi Kartika, M.Kom",
+    "email": "dewi@gmail.com",
+    "programStudi": "Teknik Informatika",
+    "maxSks": 10,
+    "status": true
+  },
+  {
+    "id": 3,
+    "nidn": "0634567890",
+    "nama": "Bambang Prasetyo, M.Cs",
+    "email": "bambang@gmail.com",
+    "programStudi": "Sistem Informasi",
+    "maxSks": 14,
     "status": true
   }
 ]

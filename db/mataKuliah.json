@@ -8,5 +8,35 @@
     "dosenId": 1,
     "dosen": "Dr. Randy Savero",
     "status": true
+  },
+  {
+    "id": 2,
+    "kode": "IF002",
+    "nama": "Basis Data",
+    "sks": 3,
+    "semester": 4,
+    "dosenId": 2,
+    "dosen": "Dewi Kartika, M.Kom",
+    "status": true
+  },
+  {
+    "id": 3,
+    "kode": "IF003",
+    "nama": "Jaringan Komputer",
+    "sks": 2,
+    "semester": 4,
+    "dosenId": 3,
+    "dosen": "Bambang Prasetyo, M.Cs",
+    "status": true
+  },
+  {
+    "id": 4,
+    "kode": "IF004",
+    "nama": "Pemrograman Mobile",
+    "sks": 3,
+    "semester": 5,
+    "dosenId": 1,
+    "dosen": "Dr. Randy Savero",
+    "status": true
   }
 ]

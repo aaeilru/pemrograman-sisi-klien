@@ -70,6 +70,16 @@ const permissionOptions = [
       { key: "user.delete", label: "Hapus User" },
     ],
   },
+  {
+  group: "Rencana Studi",
+    permissions: [
+      { key: "rencana-studi.page", label: "Menu Rencana Studi" },
+      { key: "rencana-studi.read", label: "Lihat Rencana Studi" },
+      { key: "rencana-studi.create", label: "Tambah Kelas Rencana Studi" },
+      { key: "rencana-studi.update", label: "Update Rencana Studi" },
+      { key: "rencana-studi.delete", label: "Hapus Rencana Studi" },
+    ],
+  },
 ];
 
 const roleTemplates = {

@@ -31,7 +31,12 @@
       "kelas.read",
       "kelas.create",
       "kelas.update",
-      "kelas.delete"
+      "kelas.delete",
+      "rencana-studi.page",
+      "rencana-studi.read",
+      "rencana-studi.create",
+      "rencana-studi.update",
+      "rencana-studi.delete"
     ]
   },
   {
@@ -45,7 +50,10 @@
       "matakuliah.page",
       "matakuliah.create",
       "kelas.page",
-      "kelas.read"
+      "kelas.read",
+      "rencana-studi.page",
+      "rencana-studi.read",
+      "jadwal-kuliah.page"
     ]
   },
   {
@@ -65,7 +73,26 @@
       "matakuliah.update",
       "matakuliah.delete",
       "kelas.page",
-      "kelas.read"
+      "kelas.read",
+      "jadwal-kuliah.page"
+    ]
+  },
+  {
+    "id": 4,
+    "name": "Citra Lestari",
+    "email": "citra@gmail.com",
+    "password": "password",
+    "role": "mahasiswa",
+    "mahasiswaId": 3,
+    "permission": [
+      "dashboard.page",
+      "matakuliah.page",
+      "matakuliah.create",
+      "kelas.page",
+      "kelas.read",
+      "rencana-studi.page",
+      "rencana-studi.read",
+      "jadwal-kuliah.page"
     ]
   }
 ]

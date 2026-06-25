@@ -1,4 +1,105 @@
 {
+  "chart": {
+    "students": [
+      {
+        "id": 1,
+        "faculty": "Teknik",
+        "count": 320
+      },
+      {
+        "id": 2,
+        "faculty": "Ekonomi",
+        "count": 210
+      },
+      {
+        "id": 3,
+        "faculty": "Kedokteran",
+        "count": 150
+      },
+      {
+        "id": 4,
+        "faculty": "Hukum",
+        "count": 180
+      },
+      {
+        "id": 5,
+        "faculty": "Ilmu Komputer",
+        "count": 260
+      }
+    ],
+    "genderRatio": [
+      {
+        "id": 1,
+        "gender": "Laki-laki",
+        "count": 600
+      },
+      {
+        "id": 2,
+        "gender": "Perempuan",
+        "count": 700
+      }
+    ],
+    "registrations": [
+      {
+        "id": 1,
+        "year": 2020,
+        "total": 500
+      },
+      {
+        "id": 2,
+        "year": 2021,
+        "total": 580
+      },
+      {
+        "id": 3,
+        "year": 2022,
+        "total": 640
+      },
+      {
+        "id": 4,
+        "year": 2023,
+        "total": 710
+      }
+    ],
+    "gradeDistribution": [
+      {
+        "subject": "TI",
+        "A": 120,
+        "B": 80,
+        "C": 40
+      },
+      {
+        "subject": "SI",
+        "A": 100,
+        "B": 90,
+        "C": 50
+      },
+      {
+        "subject": "MI",
+        "A": 110,
+        "B": 85,
+        "C": 30
+      }
+    ],
+    "lecturerRanks": [
+      {
+        "rank": "Asisten Ahli",
+        "count": 30
+      },
+      {
+        "rank": "Lektor",
+        "count": 50
+      },
+      {
+        "rank": "Lektor Kepala",
+        "count": 40
+      },
+      {
+        "rank": "Guru Besar",
+        "count": 10
+      }
+    ]
+  },
   "dosen": [
     {
       "id": 1,
@@ -6,6 +107,25 @@
       "nama": "Dr. Randy Savero",
       "email": "randy@gmail.com",
       "programStudi": "Teknik Informatika",
+      "maxSks": 12,
+      "status": true
+    },
+    {
+      "id": 2,
+      "nidn": "0623456789",
+      "nama": "Dewi Kartika, M.Kom",
+      "email": "dewi@gmail.com",
+      "programStudi": "Teknik Informatika",
+      "maxSks": 10,
+      "status": true
+    },
+    {
+      "id": 3,
+      "nidn": "0634567890",
+      "nama": "Bambang Prasetyo, M.Cs",
+      "email": "bambang@gmail.com",
+      "programStudi": "Sistem Informasi",
+      "maxSks": 14,
       "status": true
     }
   ],
@@ -36,6 +156,7 @@
       "semester": 6,
       "email": "susi@mail.com",
       "alamat": "Semarang",
+      "maxSks": 20,
       "status": true
     },
     {
@@ -46,6 +167,29 @@
       "semester": 4,
       "email": "budi@mail.com",
       "alamat": "Kendal",
+      "maxSks": 18,
+      "status": true
+    },
+    {
+      "id": 3,
+      "nim": "A11.2023.15269",
+      "nama": "Citra Lestari",
+      "programStudi": "Teknik Informatika",
+      "semester": 4,
+      "email": "citra@mail.com",
+      "alamat": "Semarang",
+      "maxSks": 20,
+      "status": true
+    },
+    {
+      "id": 4,
+      "nim": "A11.2023.15270",
+      "nama": "Dina Maharani",
+      "programStudi": "Teknik Informatika",
+      "semester": 4,
+      "email": "dina@mail.com",
+      "alamat": "Demak",
+      "maxSks": 18,
       "status": true
     }
   ],
@@ -59,6 +203,80 @@
       "dosenId": 1,
       "dosen": "Dr. Randy Savero",
       "status": true
+    },
+    {
+      "id": 2,
+      "kode": "IF002",
+      "nama": "Basis Data",
+      "sks": 3,
+      "semester": 4,
+      "dosenId": 2,
+      "dosen": "Dewi Kartika, M.Kom",
+      "status": true
+    },
+    {
+      "id": 3,
+      "kode": "IF003",
+      "nama": "Jaringan Komputer",
+      "sks": 2,
+      "semester": 4,
+      "dosenId": 3,
+      "dosen": "Bambang Prasetyo, M.Cs",
+      "status": true
+    },
+    {
+      "id": 4,
+      "kode": "IF004",
+      "nama": "Pemrograman Mobile",
+      "sks": 3,
+      "semester": 5,
+      "dosenId": 1,
+      "dosen": "Dr. Randy Savero",
+      "status": true
+    }
+  ],
+  "rencanaStudi": [
+    {
+      "id": 1,
+      "mataKuliahId": 1,
+      "dosenId": 1,
+      "hari": "Senin",
+      "jamMulai": "08:00",
+      "jamSelesai": "10:30",
+      "ruang": "H.3.1",
+      "mahasiswaIds": [
+        3
+      ]
+    },
+    {
+      "id": 2,
+      "mataKuliahId": 2,
+      "dosenId": 2,
+      "hari": "Selasa",
+      "jamMulai": "10:30",
+      "jamSelesai": "13:00",
+      "ruang": "H.4.2",
+      "mahasiswaIds": []
+    },
+    {
+      "id": 3,
+      "mataKuliahId": 3,
+      "dosenId": 3,
+      "hari": "Rabu",
+      "jamMulai": "13:00",
+      "jamSelesai": "14:40",
+      "ruang": "D.2.4",
+      "mahasiswaIds": []
+    },
+    {
+      "id": 4,
+      "mataKuliahId": 4,
+      "dosenId": 1,
+      "hari": "Kamis",
+      "jamMulai": "08:00",
+      "jamSelesai": "10:30",
+      "ruang": "Lab Komputer 1",
+      "mahasiswaIds": []
     }
   ],
   "user": [
@@ -94,7 +312,12 @@
         "kelas.read",
         "kelas.create",
         "kelas.update",
-        "kelas.delete"
+        "kelas.delete",
+        "rencana-studi.page",
+        "rencana-studi.read",
+        "rencana-studi.create",
+        "rencana-studi.update",
+        "rencana-studi.delete"
       ]
     },
     {
@@ -108,7 +331,10 @@
         "matakuliah.page",
         "matakuliah.create",
         "kelas.page",
-        "kelas.read"
+        "kelas.read",
+        "rencana-studi.page",
+        "rencana-studi.read",
+        "jadwal-kuliah.page"
       ]
     },
     {
@@ -128,7 +354,26 @@
         "matakuliah.update",
         "matakuliah.delete",
         "kelas.page",
-        "kelas.read"
+        "kelas.read",
+        "jadwal-kuliah.page"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Citra Lestari",
+      "email": "citra@gmail.com",
+      "password": "password",
+      "role": "mahasiswa",
+      "mahasiswaId": 3,
+      "permission": [
+        "dashboard.page",
+        "matakuliah.page",
+        "matakuliah.create",
+        "kelas.page",
+        "kelas.read",
+        "rencana-studi.page",
+        "rencana-studi.read",
+        "jadwal-kuliah.page"
       ]
     }
   ]

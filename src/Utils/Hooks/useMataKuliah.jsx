@@ -14,7 +14,7 @@ import {
   toastError,
 } from "../Helpers/ToastHelpers";
 
-export const useMataKuliah = (user, params = {}) => {
+export const useMataKuliah = (user = null, params = {}) => {
   const queryParams =
     user?.role === "dosen"
       ? {
@@ -24,14 +24,13 @@ export const useMataKuliah = (user, params = {}) => {
       : params;
 
   return useQuery({
-    queryKey: ["mata-kuliah", user?.role, user?.dosenId, queryParams],
+    queryKey: ["mata-kuliah", user?.role || "all", user?.dosenId || null, queryParams],
     queryFn: () => getAllMataKuliah(queryParams),
-    enabled: !!user,
     select: (res) => ({
       data: res?.data ?? [],
       total: Number(res?.headers?.["x-total-count"] ?? 0),
     }),
-    keepPreviousData: true,
+    placeholderData: (previousData) => previousData,
     staleTime: 1000 * 60 * 5,
     refetchOnWindowFocus: false,
   });

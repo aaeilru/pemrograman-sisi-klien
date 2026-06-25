@@ -7,6 +7,7 @@
     "semester": 6,
     "email": "susi@mail.com",
     "alamat": "Semarang",
+    "maxSks": 20,
     "status": true
   },
   {
@@ -17,6 +18,29 @@
     "semester": 4,
     "email": "budi@mail.com",
     "alamat": "Kendal",
+    "maxSks": 18,
+    "status": true
+  },
+  {
+    "id": 3,
+    "nim": "A11.2023.15269",
+    "nama": "Citra Lestari",
+    "programStudi": "Teknik Informatika",
+    "semester": 4,
+    "email": "citra@mail.com",
+    "alamat": "Semarang",
+    "maxSks": 20,
+    "status": true
+  },
+  {
+    "id": 4,
+    "nim": "A11.2023.15270",
+    "nama": "Dina Maharani",
+    "programStudi": "Teknik Informatika",
+    "semester": 4,
+    "email": "dina@mail.com",
+    "alamat": "Demak",
+    "maxSks": 18,
     "status": true
   }
 ]
