@@ -129,7 +129,7 @@ const Sidebar = () => {
       : "User";
 
   return (
-    <aside className="flex min-h-screen w-64 shrink-0 flex-col bg-blue-800 text-white shadow-xl">
+    <aside className="sticky top-0 z-40 flex h-screen w-64 shrink-0 flex-col overflow-y-auto bg-blue-800 text-white shadow-xl">
       <div className="border-b border-blue-700 px-6 py-6">
         <div className="flex flex-col">
           <h1 className="text-2xl font-bold tracking-wide">

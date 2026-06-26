@@ -1,14 +1,41 @@
-import Sidebar from "../components/organisms/Sidebar.jsx";
-import Header from "../components/organisms/Header.jsx";
-import Footer from "../components/organisms/Footer.jsx";
+import { Outlet, useNavigate } from "react-router-dom";
+import Sidebar from "./Components/Sidebar";
+import Header from "./Components/Header";
+import Footer from "./Components/Footer";
+import { confirmDialog } from "../../Utils/Helpers/SwalHelpers";
+import { toastSuccess } from "../../Utils/Helpers/ToastHelpers";
 
-const AdminLayout = ({ title = "Admin", children, onToggleProfile }) => {
+const AdminLayout = () => {
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    const result = await confirmDialog({
+      title: "Konfirmasi Logout",
+      text: "Apakah Anda yakin ingin keluar?",
+      confirmText: "Ya, Logout",
+      icon: "question",
+    });
+
+    if (result.isConfirmed) {
+      localStorage.removeItem("authUser");
+      toastSuccess("Berhasil logout. Sampai jumpa!");
+      navigate("/", { replace: true });
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gray-100 flex">
+    <div className="flex min-h-screen bg-gray-100">
       <Sidebar />
-      <div className="flex flex-col flex-1">
-        <Header title={title} onToggleProfile={onToggleProfile} />
-        <main className="flex-1 p-6 overflow-x-auto">{children}</main>
+
+      <div className="flex min-w-0 flex-1 flex-col">
+        <div className="sticky top-0 z-30">
+          <Header onLogout={handleLogout} />
+        </div>
+
+        <main className="flex-1 overflow-x-hidden p-6">
+          <Outlet />
+        </main>
+
         <Footer />
       </div>
     </div>

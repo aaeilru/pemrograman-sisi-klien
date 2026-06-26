@@ -266,9 +266,6 @@ const DashboardAdmin = ({ chartData }) => {
         <h2 className="text-2xl font-bold text-slate-900">
           Dashboard Admin
         </h2>
-        <p className="mt-1 text-sm text-slate-500">
-          Visualisasi data akademik menggunakan Recharts dan React Query.
-        </p>
 
         <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-5">
           <div className="rounded-2xl border border-sky-100 bg-gradient-to-br from-sky-50 to-blue-50 p-5">
@@ -323,9 +320,6 @@ const DashboardAdmin = ({ chartData }) => {
           <h3 className="text-lg font-bold text-slate-900">
             Mahasiswa per Fakultas
           </h3>
-          <p className="mt-1 text-sm text-slate-500">
-            Bar chart dengan warna pastel berbeda untuk tiap fakultas.
-          </p>
 
           <div className="mt-5 h-[320px]">
             <ResponsiveContainer width="100%" height="100%">
@@ -358,9 +352,6 @@ const DashboardAdmin = ({ chartData }) => {
           <h3 className="text-lg font-bold text-slate-900">
             Rasio Gender Mahasiswa
           </h3>
-          <p className="mt-1 text-sm text-slate-500">
-            Perempuan ditampilkan dengan warna pink pastel.
-          </p>
 
           <div className="mt-5 h-[320px]">
             <ResponsiveContainer width="100%" height="100%">
@@ -394,9 +385,6 @@ const DashboardAdmin = ({ chartData }) => {
           <h3 className="text-lg font-bold text-slate-900">
             Tren Pendaftaran Mahasiswa
           </h3>
-          <p className="mt-1 text-sm text-slate-500">
-            Line chart untuk melihat pertumbuhan pendaftaran dari tahun ke tahun.
-          </p>
 
           <div className="mt-5 h-[320px]">
             <ResponsiveContainer width="100%" height="100%">
@@ -431,9 +419,6 @@ const DashboardAdmin = ({ chartData }) => {
           <h3 className="text-lg font-bold text-slate-900">
             Distribusi Nilai per Jurusan
           </h3>
-          <p className="mt-1 text-sm text-slate-500">
-            Radar chart untuk membandingkan jumlah nilai A, B, dan C.
-          </p>
 
           <div className="mt-5 h-[320px]">
             <ResponsiveContainer width="100%" height="100%">
@@ -480,9 +465,6 @@ const DashboardAdmin = ({ chartData }) => {
           <h3 className="text-lg font-bold text-slate-900">
             Jumlah Dosen Berdasarkan Pangkat
           </h3>
-          <p className="mt-1 text-sm text-slate-500">
-            Area chart untuk menampilkan jumlah dosen berdasarkan pangkat akademik.
-          </p>
 
           <div className="mt-5 h-[320px]">
             <ResponsiveContainer width="100%" height="100%">
